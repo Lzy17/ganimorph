@@ -110,7 +110,7 @@ class GANTrainer(TowerTrainer):
         print('shit')
         print(len(model.inputs()))
 
-        x = [k.name for k in input_signature]
+        x = [k.name for k in model.inputs()]
         for name in x:
             print(name)
 
