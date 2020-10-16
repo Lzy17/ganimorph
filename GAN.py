@@ -112,11 +112,10 @@ class GANTrainer(TowerTrainer):
 
         x = [k.name for k in model.inputs()]
         for name in x:
-            for shit in name:
-                print(shit)
+            print(name)
 
 
-        self.tower_func = tf.compat.v1.TowerFunc(model.build_graph, model.inputs())
+        self.tower_func = TowerFunc(model.build_graph, model.inputs())
         with TowerContext('', is_training=True):
             self.tower_func(*input.get_input_tensors())
         opt = model.get_optimizer()
@@ -138,7 +137,7 @@ class GANTrainer(TowerTrainer):
             model.build_graph(*inputs)
             return [model.d_loss, model.g_loss]
 
-        self.tower_func = tf.compat.v1.TowerFunc(get_cost, model.get_input_signature())
+        self.tower_func = TowerFunc(get_cost, model.get_input_signature())
         devices = [LeastLoadedDeviceSetter(d, raw_devices) for d in raw_devices]
         cost_list = DataParallelBuilder.call_for_each_tower(
             list(range(num_gpu)),
@@ -178,7 +177,7 @@ class SeparateGANTrainer(TowerTrainer):
         self.register_callback(cbs)
 
         # Build the graph
-        self.tower_func = tf.compat.v1.TowerFunc(model.build_graph, model.inputs())
+        self.tower_func = TowerFunc(model.build_graph, model.inputs())
         with TowerContext('', is_training=True), \
                 argscope(BatchNorm, ema_update='internal'):
             # should not hook the EMA updates to both train_op, it will hurt training speed.
