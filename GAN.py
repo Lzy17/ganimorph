@@ -114,8 +114,9 @@ class GANTrainer(TowerTrainer):
         for name in x:
             print(name)
 
+        #changed inputs to get_input_signature!!!!!!!!!!
 
-        self.tower_func = TowerFunc(model.build_graph, model.inputs())
+        self.tower_func = TowerFunc(model.build_graph, model.get_input_signature())
         with TowerContext('', is_training=True):
             self.tower_func(*input.get_input_tensors())
         opt = model.get_optimizer()
