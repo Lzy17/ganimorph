@@ -18,7 +18,7 @@ from tensorpack.tfutils.summary import add_moving_summary
 import tensorflow as tf
 from tensorflow.python.training import moving_averages
 from utils import *
-from GAN import GANTrainer, MultiGPUGANTrainer, SeparateGANTrainer, GANModelDesc
+from GAN import GANTrainer, SeparateGANTrainer, GANModelDesc
 """
 The official code for Improved Shape Deformation in Unsupervised Image to Image
 Translation.
