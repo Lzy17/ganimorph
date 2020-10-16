@@ -3,8 +3,7 @@
 # Author: Yuxin Wu
 
 import numpy as np
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
+import tensorflow as tf
 tf.compat.v1.disable_eager_execution()
 from tensorpack import BatchNorm, DataFlow, ModelDescBase, StagingInput, TowerTrainer, argscope
 from tensorpack.graph_builder import DataParallelBuilder, LeastLoadedDeviceSetter
@@ -107,6 +106,12 @@ class GANTrainer(TowerTrainer):
         not needed. Just calling model.build_graph directly is OK.
         """
         # Build the graph
+        #really need to fix this can skip
+
+        for k in model.inputs():
+            print(k)
+
+
         self.tower_func = TowerFunc(model.build_graph, model.inputs())
         with TowerContext('', is_training=True):
             self.tower_func(*input.get_input_tensors())
