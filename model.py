@@ -3,7 +3,7 @@ from tensorflow.python.training import moving_averages
 from tensorpack import *
 from tensorpack.utils.viz import *
 from tensorpack.tfutils.summary import add_moving_summary
-from GAN import GANTrainer, MultiGPUGANTrainer, SeparateGANTrainer, GANModelDesc
+from GAN import GANTrainer, SeparateGANTrainer, GANModelDesc
 from utils import *
 
 import tensorpack.tfutils.symbolic_functions as symbf
@@ -258,4 +258,3 @@ class Model(GANModelDesc):
         lr = tf.get_variable('learning_rate', initializer=2e-4,
                  trainable=False)
         return tf.train.AdamOptimizer(lr, beta1=0.5)
-
