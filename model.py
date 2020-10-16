@@ -15,8 +15,8 @@ NF = 64  # channel size
 
 class Model(GANModelDesc):
     def inputs(self):
-        return [tf.compat.v1.placeholder(tf.float32, (None, SHAPE, SHAPE, 3), 'inputA'),
-                tf.compat.v1.placeholder(tf.float32, (None, SHAPE, SHAPE, 3), 'inputB')]
+        return [tf.compat.v1.placeholder(tf.float32, (None, SHAPE, SHAPE, 3), 'inputC'),
+                tf.compat.v1.placeholder(tf.float32, (None, SHAPE, SHAPE, 3), 'inputD')]
 
     @staticmethod
     def build_res_block(x, name, chan, first=False):
