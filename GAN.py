@@ -110,8 +110,9 @@ class GANTrainer(TowerTrainer):
         print('shit')
         print(len(model.inputs()))
 
-        for k in model.inputs():
-            print(k.name)
+        x = [k.name for k in input_signature]
+        for name in x:
+            print(name)
 
 
         self.tower_func = TowerFunc(model.build_graph, model.inputs())
