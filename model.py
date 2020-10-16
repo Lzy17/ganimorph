@@ -1,4 +1,4 @@
-import tensorflow as tf
+tf.compat.v1.contribimport tensorflow as tf
 from tensorflow.python.training import moving_averages
 from tensorpack import *
 from tensorpack.utils.viz import *
@@ -66,13 +66,13 @@ class Model(GANModelDesc):
             relu2 = Conv2D('conv2', relu1, NF * 8)
 
             relu3 = Conv2D('convf', relu2, NF*8, kernel_shape=3, stride=1)
-            atrous = tf.contrib.layers.conv2d(relu3, NF*8, kernel_size=3,
+            atrous = tf.compat.v1.contrib.layers.conv2d(relu3, NF*8, kernel_size=3,
                     data_format='NCHW', rate=2,
                     activation_fn=INLReLU, biases_initializer=None)
-            atrous2 = tf.contrib.layers.conv2d(atrous, NF*8, kernel_size=3,
+            atrous2 = tf.compat.v1.contrib.layers.conv2d(atrous, NF*8, kernel_size=3,
                     data_format='NCHW', rate=4,
                     activation_fn=INLReLU, biases_initializer=None)
-            atrous3 = tf.contrib.layers.conv2d(atrous2, NF*8, kernel_size=3,
+            atrous3 = tf.compat.v1.contrib.layers.conv2d(atrous2, NF*8, kernel_size=3,
                     data_format='NCHW', rate=8,
                     activation_fn=INLReLU, biases_initializer=None)
             merge = tf.concat([relu3, atrous3], axis=1)
@@ -162,7 +162,7 @@ class Model(GANModelDesc):
 
         # use the initializers from torch
         with argscope([Conv2D, Deconv2D, FullyConnected],
-                      W_init=tf.contrib.layers.variance_scaling_initializer(factor=0.333, uniform=True),
+                      W_init=tf.compat.v1.contrib.layers.variance_scaling_initializer(factor=0.333, uniform=True),
                       use_bias=False), \
                 argscope(BatchNorm, gamma_init=tf.random_uniform_initializer()), \
                 argscope([Conv2D, Deconv2D, BatchNorm, InstanceNorm],
