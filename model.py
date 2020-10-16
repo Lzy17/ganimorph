@@ -1,4 +1,4 @@
-tf.compat.v1.contribimport tensorflow as tf
+import tensorflow as tf
 from tensorflow.python.training import moving_averages
 from tensorpack import *
 from tensorpack.utils.viz import *
