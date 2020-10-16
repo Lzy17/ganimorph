@@ -19,6 +19,7 @@ import tensorflow as tf
 from tensorflow.python.training import moving_averages
 from utils import *
 from GAN import GANTrainer, SeparateGANTrainer, GANModelDesc
+from tensorpack.utils.gpu import get_num_gpu
 """
 The official code for Improved Shape Deformation in Unsupervised Image to Image
 Translation.
