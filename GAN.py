@@ -2,15 +2,15 @@
 # File: GAN.py
 # Author: Yuxin Wu
 
-import tensorflow as tf
 import numpy as np
-from tensorpack import (TowerTrainer, StagingInput,
-                        ModelDescBase, DataFlow)
-from tensorpack.tfutils.tower import TowerContext, TowerFuncWrapper
+import tensorflow as tf
+
+from tensorpack import BatchNorm, DataFlow, ModelDescBase, StagingInput, TowerTrainer, argscope
 from tensorpack.graph_builder import DataParallelBuilder, LeastLoadedDeviceSetter
 from tensorpack.tfutils.summary import add_moving_summary
-from tensorpack.utils.argtools import memoized
-from tensorpack.utils.develop import deprecated
+from tensorpack.tfutils.tower import TowerContext, TowerFunc
+from tensorpack.utils import logger
+from tensorpack.utils.argtools import memoized_method
 
 
 class GANModelDesc(ModelDescBase):
@@ -68,7 +68,7 @@ class GANModelDesc(ModelDescBase):
         """
         pass
 
-    @memoized
+    @memoized_method
     def get_optimizer(self):
         return self.optimizer()
 
@@ -88,7 +88,7 @@ class GANTrainer(TowerTrainer):
             input = StagingInput(input)
 
         # Setup input
-        cbs = input.setup(model.get_inputs_desc())
+        cbs = input.setup(model.get_input_signature())
         self.register_callback(cbs)
 
         if num_gpu <= 1:
@@ -105,7 +105,7 @@ class GANTrainer(TowerTrainer):
         not needed. Just calling model.build_graph directly is OK.
         """
         # Build the graph
-        self.tower_func = TowerFuncWrapper(model.build_graph, model.get_inputs_desc())
+        self.tower_func = TowerFunc(model.build_graph, model.inputs())
         with TowerContext('', is_training=True):
             self.tower_func(*input.get_input_tensors())
         opt = model.get_optimizer()
@@ -127,9 +127,9 @@ class GANTrainer(TowerTrainer):
             model.build_graph(*inputs)
             return [model.d_loss, model.g_loss]
 
-        self.tower_func = TowerFuncWrapper(get_cost, model.get_inputs_desc())
+        self.tower_func = TowerFunc(get_cost, model.get_input_signature())
         devices = [LeastLoadedDeviceSetter(d, raw_devices) for d in raw_devices]
-        cost_list = DataParallelBuilder.build_on_towers(
+        cost_list = DataParallelBuilder.call_for_each_tower(
             list(range(num_gpu)),
             lambda: self.tower_func(*input.get_input_tensors()),
             devices)
@@ -149,16 +149,6 @@ class GANTrainer(TowerTrainer):
         self.train_op = d_min
 
 
-class MultiGPUGANTrainer(GANTrainer):
-    """
-    A replacement of GANTrainer (optimize d and g one by one) with multi-gpu support.
-    """
-
-    @deprecated("Please use GANTrainer and set num_gpu", "2019-01-31")
-    def __init__(self, num_gpu, input, model):
-        super(MultiGPUGANTrainer, self).__init__(input, model, 1)
-
-
 class SeparateGANTrainer(TowerTrainer):
     """ A GAN trainer which runs two optimization ops with a certain ratio."""
     def __init__(self, input, model, d_period=1, g_period=1):
@@ -173,13 +163,19 @@ class SeparateGANTrainer(TowerTrainer):
         assert min(d_period, g_period) == 1
 
         # Setup input
-        cbs = input.setup(model.get_inputs_desc())
+        cbs = input.setup(model.get_input_signature())
         self.register_callback(cbs)
 
         # Build the graph
-        self.tower_func = TowerFuncWrapper(model.build_graph, model.get_inputs_desc())
-        with TowerContext('', is_training=True):
+        self.tower_func = TowerFunc(model.build_graph, model.inputs())
+        with TowerContext('', is_training=True), \
+                argscope(BatchNorm, ema_update='internal'):
+            # should not hook the EMA updates to both train_op, it will hurt training speed.
             self.tower_func(*input.get_input_tensors())
+        update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+        if len(update_ops):
+            logger.warn("Found {} ops in UPDATE_OPS collection!".format(len(update_ops)))
+            logger.warn("Using SeparateGANTrainer with UPDATE_OPS may hurt your training speed a lot!")
 
         opt = model.get_optimizer()
         with tf.name_scope('optimize'):
