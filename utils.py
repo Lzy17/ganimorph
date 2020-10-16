@@ -142,7 +142,7 @@ def get_data(datadir, isTrain=True):
     def get_image_pairs(dir1, dir2):
         def get_df(dir):
             files = sorted(glob(os.path.join(dir, '*.jpg')) +
-                glob(os.path.join(dir, '*.png')))
+                glob(os.path.join(dir, '*.png')) + glob(os.path.join(dir, '*.jpeg')))
             df = ImageFromFile(files, channel=3, shuffle=isTrain)
             return AugmentImageComponent(df, augs)
         return JoinData([get_df(dir1), get_df(dir2)])
