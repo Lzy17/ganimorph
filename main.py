@@ -43,10 +43,10 @@ if __name__ == '__main__':
     SeparateGANTrainer(data, Model(),2).train_with_defaults(
         callbacks=[
             PeriodicTrigger(ModelSaver(), every_k_epochs=20),
+            PeriodicTrigger(VisualizeTestSet(args.data), every_k_epochs=3),
             ScheduledHyperParamSetter(
                                 'learning_rate',
                                 [(150, 2e-4), (300, 0)], interp='linear')],
-            PeriodicTrigger(VisualizeTestSet(args.data), every_k_epochs=3),
         steps_per_epoch=1000,
         session_init=SaverRestore(args.load) if args.load else None
     )
