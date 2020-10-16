@@ -111,7 +111,7 @@ class GANTrainer(TowerTrainer):
         print(len(model.inputs()))
 
         for k in model.inputs():
-            print(k)
+            print(k.name)
 
 
         self.tower_func = TowerFunc(model.build_graph, model.inputs())
