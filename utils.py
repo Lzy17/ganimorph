@@ -5,7 +5,7 @@ from tensorpack.utils.viz import *
 import tensorflow as tf
 import numpy as np
 
-SHAPE = 128
+SHAPE = 256
 BATCH = 16
 TEST_BATCH = 32
 NF = 64  # channel size

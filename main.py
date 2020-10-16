@@ -40,7 +40,12 @@ if __name__ == '__main__':
     data = get_data(args.data)
     data = QueueInput(data)
     # train 1 D after 2 G
-    SeparateGANTrainer(data, Model(),2).train_with_defaults(
+
+
+
+
+    trainer = GANTrainer(data, Model(), get_num_gpu())
+    trainer.train_with_defaults(
         callbacks=[
             PeriodicTrigger(ModelSaver(), every_k_epochs=20),
             PeriodicTrigger(VisualizeTestSet(args.data), every_k_epochs=3),
@@ -50,11 +55,3 @@ if __name__ == '__main__':
         steps_per_epoch=1000,
         session_init=SaverRestore(args.load) if args.load else None
     )
-    #SeparateGANTrainer(config, 2).train()
-    # If you want to run across GPUs use code similar to below.
-    #nr_gpu = get_nr_gpu()
-    #config.nr_tower = max(get_nr_gpu(), 1)
-    #if config.nr_tower == 1:
-    #    GANTrainer(config).train()
-    #else:
-    #    MultiGPUGANTrainer(config).train()

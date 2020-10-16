@@ -8,7 +8,7 @@ from utils import *
 
 import tensorpack.tfutils.symbolic_functions as symbf
 
-SHAPE = 128
+SHAPE = 256
 BATCH = 16
 TEST_BATCH = 32
 NF = 64  # channel size
