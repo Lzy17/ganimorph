@@ -168,6 +168,7 @@ class SeparateGANTrainer(TowerTrainer):
         self.register_callback(cbs)
 
         # Build the graph
+        
         self.tower_func = TowerFunc(model.build_graph, model.inputs())
         with TowerContext('', is_training=True), \
                 argscope(BatchNorm, ema_update='internal'):
