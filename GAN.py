@@ -112,8 +112,7 @@ class GANTrainer(TowerTrainer):
 
         x = [k.name for k in model.inputs()]
         for name in x:
-            if any(k in name for k in [':', '/', ' ']):
-                print(k)
+            print(name)
 
 
         self.tower_func = TowerFunc(model.build_graph, model.inputs())
