@@ -107,6 +107,8 @@ class GANTrainer(TowerTrainer):
         """
         # Build the graph
         #really need to fix this can skip
+        print(shit)
+        print(len(model.inputs()))
 
         for k in model.inputs():
             print(k)
