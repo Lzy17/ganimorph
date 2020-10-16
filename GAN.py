@@ -3,7 +3,8 @@
 # Author: Yuxin Wu
 
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 tf.compat.v1.disable_eager_execution()
 from tensorpack import BatchNorm, DataFlow, ModelDescBase, StagingInput, TowerTrainer, argscope
 from tensorpack.graph_builder import DataParallelBuilder, LeastLoadedDeviceSetter
