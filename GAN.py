@@ -4,13 +4,14 @@
 
 import numpy as np
 import tensorflow as tf
-
+tf.compat.v1.disable_eager_execution()
 from tensorpack import BatchNorm, DataFlow, ModelDescBase, StagingInput, TowerTrainer, argscope
 from tensorpack.graph_builder import DataParallelBuilder, LeastLoadedDeviceSetter
 from tensorpack.tfutils.summary import add_moving_summary
 from tensorpack.tfutils.tower import TowerContext, TowerFunc
 from tensorpack.utils import logger
 from tensorpack.utils.argtools import memoized_method
+
 
 
 class GANModelDesc(ModelDescBase):
