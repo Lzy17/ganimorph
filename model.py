@@ -10,7 +10,7 @@ import tensorpack.tfutils.symbolic_functions as symbf
 
 SHAPE = 256
 BATCH = 16
-TEST_BATCH = 32
+TEST_BATCH = 16
 NF = 64  # channel size
 
 class Model(GANModelDesc):
